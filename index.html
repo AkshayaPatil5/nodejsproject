@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Company Feedback Form</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>Company Feedback Form</h1>
+  <form id="feedback-form">
+    <label for="company">Company Name:</label>
+    <input type="text" id="company" name="company" required>
+    <br>
+    <label for="pros">Pros:</label>
+    <textarea id="pros" name="pros" required></textarea>
+    <br>
+    <label for="cons">Cons:</label>
+    <textarea id="cons" name="cons" required></textarea>
+    <br>
+    <label for="rating">Rating (1-5):</label>
+    <input type="number" id="rating" name="rating" min="1" max="5" required>
+    <br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <h2>Search Feedback</h2>
+  <form id="search-form">
+    <label for="search">Search Company:</label>
+    <input type="text" id="search" name="search" required>
+    <input type="submit" value="Search">
+  </form>
+
+  <!-- Display feedback and search results here -->
+  <div id="feedback-results"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const feedbackForm = document.getElementById('feedback-form');
+      const searchForm = document.getElementById('search-form');
+      const feedbackResults = document.getElementById('feedback-results');
+
+      feedbackForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(feedbackForm);
+
+        try {
+          const response = await fetch('/submit-feedback', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (response.ok) {
+            const feedbackMessage = await response.text();
+            alert(feedbackMessage);
+            feedbackForm.reset();
+          } else {
+            alert('Error submitting feedback');
+          }
+        } catch (error) {
+          console.error(error);
+          alert('An error occurred while submitting feedback');
+        }
+      });
+
+      searchForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const searchTerm = searchForm.elements.search.value;
+
+        try {
+          const response = await fetch(`/search-feedback?search=${searchTerm}`);
+
+          if (response.ok) {
+            const searchResults = await response.text();
+            feedbackResults.innerHTML = searchResults;
+          } else {
+            alert('Error searching feedback');
+          }
+        } catch (error) {
+          console.error(error);
+          alert('An error occurred while searching feedback');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
